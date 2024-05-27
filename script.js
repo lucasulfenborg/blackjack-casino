@@ -21,7 +21,8 @@ class player {
 }
 
 class game {
-    constructor() {
+    constructor(name) {
+        this.name = name;
         this.players = [];
     }
 
@@ -34,10 +35,10 @@ class game {
     }
 
     //Method to create a html "card" element for the game
-    createGameIcon(name) {
+    createGameIcon() {
         let cardElement = document.createElement('div');
         cardElement.classList.add('gameIcon');
-        cardElement.innerHTML = name;
+        cardElement.innerHTML = this.name;
         document.body.appendChild(cardElement);
 
         //make game icon clickable that runs startGame()
@@ -48,6 +49,101 @@ class game {
 
     }
 
+    startGame() {
+
+    }
+
+    createActionContainer() {
+        let actionContainer = document.createElement('div');
+        actionContainer.classList.add('actionContainer');
+        document.body.appendChild(actionContainer);
+        
+        //Create info div
+        let infoDiv = document.createElement('div');
+        infoDiv.classList.add('infoDiv');
+        actionContainer.appendChild(infoDiv);
+
+        //Display info above the div, wallet and current bet
+        let wallet = document.createElement('span');
+        wallet.classList.add('wallet');
+        wallet.innerHTML = 'Wallet: ' + player1.money;
+        infoDiv.appendChild(wallet);
+
+        //Display current state of game
+        let gameState = document.createElement('div');
+        gameState.classList.add('gameState');
+        gameState.innerHTML = 'Place your bets...';
+        infoDiv.appendChild(gameState);
+
+        let betAmount = document.createElement('span');
+        betAmount.classList.add('betAmount');
+        betAmount.innerHTML = 'Current bet: ' + this.bets;
+        infoDiv.appendChild(betAmount);
+
+        
+
+
+    }
+
+
+    askForBet() {
+        let actionContainer = document.getElementsByClassName('actionContainer')[0];
+        let betAmount = document.getElementsByClassName('betAmount')[0];
+        betAmount.innerHTML = 'Current bet: ' + this.bets;
+        
+
+        //Display div containing bettings (5, 10, 20)
+        
+
+        let bet5 = document.createElement('button');
+        bet5.classList.add('betButton');
+        bet5.innerHTML = '5';
+        actionContainer.appendChild(bet5);
+
+        let bet10 = document.createElement('button');
+        bet10.innerHTML = '10';
+        bet10.classList.add('betButton');
+        actionContainer.appendChild(bet10);
+
+        
+        let bet20 = document.createElement('button');
+        bet20.classList.add('betButton');
+        bet20.innerHTML = '20';
+        actionContainer.appendChild(bet20);
+
+        let doneButton = document.createElement('button');
+        doneButton.classList.add('doneButton');
+        doneButton.innerHTML = 'Done';
+        actionContainer.appendChild(doneButton);
+
+        //Eventlisteners for betting
+        for (let button of document.getElementsByClassName('betButton')) {
+            button.addEventListener('click', function() {
+                if (player1.money < parseInt(button.innerHTML)) {
+                    return;
+                }
+                else {
+                    this.bets += parseInt(button.innerHTML);
+                    betAmount.innerHTML = 'Current bet: ' + this.bets;
+                    player1.removeMoney(parseInt(button.innerHTML));
+                    document.getElementsByClassName('wallet')[0].innerHTML = 'Wallet: ' + player1.money;
+                }
+            }.bind(this));
+        }
+        //Eventlistener for done button
+        doneButton.addEventListener('click', function() {
+            
+            //Hide all buttons inside the actionContainer
+            for (let button of document.getElementsByClassName('betButton')) {
+                button.style.display = 'none';
+                
+            }
+            doneButton.style.display = 'none';
+
+
+            
+        }.bind(this));
+    }
 }
 
 class pokerGame extends game {
@@ -75,19 +171,35 @@ class pokerGame extends game {
 class blackJack extends pokerGame {
     constructor() {
         super();
-        this.currentPlayerIndex = 0;
-        this.player_cards = [];
-
+        this.current_Player_Index = 0;
+        this.name = "BlackJack";
+        
     }
 
     startGame() {
         //Clear
         document.body.innerHTML = '';
 
-        this.deck = this.createDeck();
 
-        // ask for bets
+        this.player_cards = [];
+        this.dealer_Cards = [];
+        this.deck = this.createDeck();
+        this.bets = 0;
+
+        //Display game name
+        let gameName = document.createElement('h1');
+        gameName.innerHTML = this.name;
+        document.body.appendChild(gameName);
+
+        
+
+
+        this.createActionContainer();
+
+        this.askForBet();
         // deal first card to player
+        this.player_cards.push(this.dealCard(this.deck));
+
         // deal cards to dealer
         // play turns
         // dealer play
@@ -132,10 +244,17 @@ class blackJack extends pokerGame {
 
 }
 
-player1 = new player('Kalle', 100);
-blackJack1 = new blackJack();
+let games = [
+    blackJack1 = new blackJack(),
+    poker1 = new pokerGame('Poker')
 
-blackJack1.createGameIcon('BlackJack');
+];
+
+player1 = new player('Kalle', 100);
+
+for (let game of games) {
+    game.createGameIcon();
+}
 
 //blackJack1.addPlayer(player1);
 //blackJack1.startGame();

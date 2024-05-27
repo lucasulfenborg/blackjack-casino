@@ -1,14 +1,63 @@
+body {
+    font-size: calc(1em + 1vw);
+    
+}
+
 .gameIcon {
-    width: 100px;
-    height: 150px;
+    width: 25vw;
+    height: 35vh; 
     background-color: white;
     border: 1px solid black;
-    border-radius: 10px;
+    border-radius: 5%;
     display: inline-block;
-    margin: 10px;
+    margin: 1%; 
     text-align: center;
-    font-size: 20px;
+    font-size: 2vw; 
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    
+}
+
+.actionContainer {
+    width: 100vw;
+    height: 10vh;
+    background-color: green;
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+
+}
+
+.actionContainer > button {
+    width: 20vw;
+    height: 5vh;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5%;
+    display: inline-block;
+    margin: 1%; 
+    text-align: center;
+    font-size: 2vw; 
     font-weight: bold;
     color: black;
     cursor: pointer;
 }
+
+.infoDiv {
+    margin-top: -6vh;
+    width: 100vw;
+    height: fit-content;
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+}
+
+.infoDiv > span {
+    font-size: 2vw;
+    font-weight: bold;
+    color: black;
+}
+
