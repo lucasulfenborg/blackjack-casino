@@ -87,13 +87,14 @@ class game {
 
 
     askForBet() {
+        return new Promise((resolve, reject) => {
+
         let actionContainer = document.getElementsByClassName('actionContainer')[0];
         let betAmount = document.getElementsByClassName('betAmount')[0];
         betAmount.innerHTML = 'Current bet: ' + this.bets;
         
 
         //Display div containing bettings (5, 10, 20)
-        
 
         let bet5 = document.createElement('button');
         bet5.classList.add('betButton');
@@ -131,7 +132,8 @@ class game {
             }.bind(this));
         }
         //Eventlistener for done button
-        doneButton.addEventListener('click', function() {
+        doneButton.addEventListener('click', () => {
+
             
             //Hide all buttons inside the actionContainer
             for (let button of document.getElementsByClassName('betButton')) {
@@ -140,11 +142,18 @@ class game {
             }
             doneButton.style.display = 'none';
 
+            resolve();
 
+            });
             
-        }.bind(this));
-    }
-}
+        });
+            
+    }};
+
+
+                
+    
+
 
 class pokerGame extends game {
     createDeck() { //Standard poker cards
@@ -156,16 +165,37 @@ class pokerGame extends game {
     }
 
     dealCard(deck) {
- 
         let card = deck[Math.floor(Math.random() * deck.length)];
         deck.splice(deck.indexOf(card), 1);
         return card;
-}
+    }
 
-    
+    hitOrStand() {
+        return new Promise((resolve, reject) => {
+            let actionContainer = document.getElementsByClassName('actionContainer')[0];
+            let gameState = document.getElementsByClassName('gameState')[0];
+            gameState.innerHTML = 'Hit or stand?';
+            let hitButton = document.createElement('button');
+            hitButton.classList.add('hitButton');
+            hitButton.innerHTML = 'Hit';
+            actionContainer.appendChild(hitButton);
 
+            let standButton = document.createElement('button');
+            standButton.classList.add('standButton');
+            standButton.innerHTML = 'Stand';
+            actionContainer.appendChild(standButton);
 
+            //Eventlisteners for hit or stand
+            hitButton.addEventListener('click', () => {
+                resolve('hit');
+            });
 
+            standButton.addEventListener('click', () => {
+                resolve('stand');
+            });
+
+        });
+    }
 }
 
 class blackJack extends pokerGame {
@@ -176,76 +206,59 @@ class blackJack extends pokerGame {
         
     }
 
-    startGame() {
+    async startGame() {
         //Clear
         document.body.innerHTML = '';
-
 
         this.player_cards = [];
         this.dealer_Cards = [];
         this.deck = this.createDeck();
         this.bets = 0;
 
-        //Display game name
-        let gameName = document.createElement('h1');
-        gameName.innerHTML = this.name;
-        document.body.appendChild(gameName);
-
-        
-
-
         this.createActionContainer();
 
-        this.askForBet();
+        //ask for bet
+        await this.askForBet();
+
         // deal first card to player
         this.player_cards.push(this.dealCard(this.deck));
+        console.log("Your cards: ", this.player_cards);
+
+        // Deal first card to dealer
+        this.dealer_Cards.push(this.dealCard(this.deck));
+        console.log("Dealer cards: ", this.dealer_Cards);
+
+        // ask for decision (hit or stand)
+        while(true) {
+            let choice = await this.hitOrStand();
+            switch(choice) {
+                case 'hit':
+                    this.player_cards.push(this.dealCard(this.deck));
+                    break;
+                case 'stand':
+                    //Hide hit and stand buttons
+                    for (let button of document.getElementsByClassName('hitButton')) {
+                        button.style.display = 'none';
+                    }
+                    break;
+            }
+        }
+
 
         // deal cards to dealer
         // play turns
         // dealer play
         // determine winner
 
-
-        let deck1 = blackJack1.createDeck();
-        console.log(deck1);
-        let card1 = blackJack1.dealCard(deck1);
-        console.log(card1);
-        console.log(deck1);
-
-
-
-
-        //while (!this.isGameOver()) {
-        //    this.playTurn();
-        //}
-
-        // Determine winner, handle end of game
     }
-
-    
-
-    isGameOver() {
-        // Check if the game is over
-    }
-
-    playTurn() {
-        // Implement the logic for a player's turn
-
-    }
-
-    
-    dealerPlay() {
-        // Implement the logic for the dealer's turn
-
-   
-    }
-
-    
-
 }
 
 let games = [
     blackJack1 = new blackJack(),
+    blackJack2 = new blackJack(),
+    blackJack3 = new blackJack(),
+
+
     poker1 = new pokerGame('Poker')
 
 ];
