@@ -95,7 +95,6 @@ class game {
         
 
         //Display div containing bettings (5, 10, 20)
-
         let bet5 = document.createElement('button');
         bet5.classList.add('betButton');
         bet5.innerHTML = '5';
@@ -172,6 +171,15 @@ class pokerGame extends game {
 
     hitOrStand() {
         return new Promise((resolve, reject) => {
+
+            //if theres allredy buttons, remove them
+            if (document.getElementsByClassName('hitButton')[0]) {
+                document.getElementsByClassName('hitButton')[0].remove();
+            }
+            if (document.getElementsByClassName('standButton')[0]) {
+                document.getElementsByClassName('standButton')[0].remove();
+            }
+
             let actionContainer = document.getElementsByClassName('actionContainer')[0];
             let gameState = document.getElementsByClassName('gameState')[0];
             gameState.innerHTML = 'Hit or stand?';
@@ -206,6 +214,39 @@ class blackJack extends pokerGame {
         
     }
 
+    calculateHandValue(cards) {
+        let value = 0;
+        let ace = 0;
+        for (let card of cards) {
+            if (card[0] == 'h' || card[0] == 'd' || card[0] == 'c') {
+                if (card[1] == '1' || card[1] == '11' || card[1] == '12' || card[1] == '13') { //Kings, queens and jacks are worth 10
+                    value += 10;
+                }
+                else {
+                    value += parseInt(card[1]);
+                }
+            }
+            else {
+                if (card[1] == '1') {
+                    ace++;
+                }
+                else {
+                    value += parseInt(card[1]);
+                }
+            }
+        }
+        for (let i = 0; i < ace; i++) { //Ace worth either 1 or 11
+            if (value + 11 <= 21) {
+                value += 11;
+            }
+            else {
+                value += 1;
+            }
+        }
+        return value;
+
+    }
+
     async startGame() {
         //Clear
         document.body.innerHTML = '';
@@ -228,39 +269,55 @@ class blackJack extends pokerGame {
         this.dealer_Cards.push(this.dealCard(this.deck));
         console.log("Dealer cards: ", this.dealer_Cards);
 
-        // ask for decision (hit or stand)
+        //display cards
+
+        // ask for decision (hit or stand) untill stand or bust
         while(true) {
             let choice = await this.hitOrStand();
             switch(choice) {
                 case 'hit':
                     this.player_cards.push(this.dealCard(this.deck));
-                    break;
-                case 'stand':
-                    //Hide hit and stand buttons
-                    for (let button of document.getElementsByClassName('hitButton')) {
-                        button.style.display = 'none';
+                    console.log("Your cards: ", this.player_cards);
+                    if (this.calculateHandValue(this.player_cards) > 21) {
+                        console.log("You busted! Dealer wins!");
+                        break;
                     }
+
+                case 'stand':
                     break;
             }
+            break
+        }
+        // deal cards to dealer
+        while(this.calculateHandValue(this.dealer_Cards) < 17) {
+            this.dealer_Cards.push(this.dealCard(this.deck));
+            console.log("Dealer cards: ", this.dealer_Cards);
+        }
+        // determine winner
+        let playerValue = this.calculateHandValue(this.player_cards);
+        let dealerValue = this.calculateHandValue(this.dealer_Cards);
+        switch(true) {
+            case dealerValue > 21:
+                console.log("Dealer busted! You win!");
+                break;
+            case playerValue > dealerValue:
+                console.log("You win!");
+                break;
+            case playerValue < dealerValue:
+                console.log("Dealer wins!");
+                break;
+            case playerValue == dealerValue:
+                console.log("Push");
+                break;
         }
 
 
-        // deal cards to dealer
-        // play turns
-        // dealer play
-        // determine winner
 
     }
 }
 
 let games = [
     blackJack1 = new blackJack(),
-    blackJack2 = new blackJack(),
-    blackJack3 = new blackJack(),
-
-
-    poker1 = new pokerGame('Poker')
-
 ];
 
 player1 = new player('Kalle', 100);
