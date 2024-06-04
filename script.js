@@ -21,42 +21,6 @@ class player {
 
 }
 
-class card {
-    constructor(suit, value) {
-        this.suit = suit;
-        this.value = value;
-    }
-}
-
-class deck {
-    constructor() {
-        this.cards = [];
-    }
-
-    createDeck() {
-        let suits = ['♠', '♣', '♦', '♥'];
-        let values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-
-        for (let suit of suits) {
-            for (let value of values) {
-                this.cards.push(new card(suit, value));
-            }
-        }
-    }
-
-    shuffleDeck() {
-        for (let i = this.cards.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * i);
-            let temp = this.cards[i];
-            this.cards[i] = this.cards[j];
-            this.cards[j] = temp;
-        }
-    }
-
-    dealCard() {
-        return this.cards.pop();
-    }
-}
 
 class game {
     constructor(name) {
@@ -109,7 +73,7 @@ class game {
         //Display info above the div, wallet and current bet
         let wallet = document.createElement('span');
         wallet.classList.add('wallet');
-        wallet.innerHTML = 'Wallet: ' + player1.money;
+        wallet.innerHTML = 'Wallet: ' + Main.player1.money;
         infoDiv.appendChild(wallet);
 
         //Display current state of game
@@ -177,14 +141,14 @@ class game {
         //Eventlisteners for betting
         for (let button of document.getElementsByClassName('betButton')) {
             button.addEventListener('click', function() {
-                if (player1.money < parseInt(button.innerHTML)) {
+                if (Main.player1.money < parseInt(button.innerHTML)) {
                     return;
                 }
                 else {
                     this.bet += parseInt(button.innerHTML);
                     betAmount.innerHTML = 'Current bet: ' + this.bet;
-                    player1.removeMoney(parseInt(button.innerHTML));
-                    document.getElementsByClassName('wallet')[0].innerHTML = 'Wallet: ' + player1.money;
+                    Main.player1.removeMoney(parseInt(button.innerHTML));
+                    document.getElementsByClassName('wallet')[0].innerHTML = 'Wallet: ' + Main.player1.money;
                 }
             }.bind(this));
         }
@@ -460,8 +424,8 @@ class blackJack extends pokerGame {
             
         }
 
-        player1.addMoney(payout);
-        document.getElementsByClassName('wallet')[0].innerHTML = 'Wallet: ' + player1.money;
+        Main.player1.addMoney(payout);
+        document.getElementsByClassName('wallet')[0].innerHTML = 'Wallet: ' + Main.player1.money;
         document.getElementsByClassName('gameState')[0].innerHTML = end_message;
 
         //remove buttons
@@ -473,15 +437,46 @@ class blackJack extends pokerGame {
     }
 }
 
-let games = [
-    new blackJack(),
-];
+class Main {
+    constructor() {
+        this.games = [];
+    }
 
-let player1 = new player('Spelare1', 1000);
+        setup () {
 
-for (let game of games) {
-    game.createGameIcon();
-}
+            let player1 = new player('Spelare1', 1000);
+
+            this.games = [
+                new blackJack(),
+                new pokerGame(),
+                new blackJack(),
+            ];
+
+            this.createMainMenu();
+
+            
+        }
+
+        createMainMenu () {
+            document.body.innerHTML = '';
+
+            // Casino title
+            let title = document.createElement('h1');
+            title.innerHTML = 'Welcome to the Casino';
+            document.body.appendChild(title);
+
+            
+
+            for (let game of this.games) {
+                game.createGameIcon();
+        }
+     }
+    }
+
+    
+
+let main = new Main();
+main.setup();
 
 //blackJack1.addPlayer(player1);
 //blackJack1.startGame();

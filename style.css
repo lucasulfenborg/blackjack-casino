@@ -25,6 +25,10 @@ body {
     
 }
 
+.gameIcon:hover {
+    background-color: lightgreen;
+}
+
 .actionContainer {
     width: 100vw;
     height: 10vh;
@@ -51,6 +55,10 @@ body {
     font-weight: bold;
     color: black;
     cursor: pointer;
+}
+
+.actionContainer > button:hover {
+    background-color: lightgreen;
 }
 
 .infoDiv {
@@ -111,4 +119,11 @@ body {
     color: black;
     cursor: pointer;
     text-align: left;
+}
+
+h1 {
+    font-size: 5vw;
+    font-weight: bold;
+    color: black;
+    text-align: center;
 }
