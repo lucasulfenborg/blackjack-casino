@@ -57,6 +57,25 @@ body {
     cursor: pointer;
 }
 
+.actionContainer > .betButton {
+    background-color: lightblue;
+    width: 6vw;  
+    height: 8vh;  
+    border-radius: 50%;  
+}
+
+.actionContainer > .betButton.bet25 {
+    background-color: lightgreen;
+}
+.actionContainer > .betButton.bet100 {
+    background-color: darkgrey;
+}
+.actionContainer > .betButton.bet500 {
+    background-color: lightblue;
+}
+
+
+
 .actionContainer > button:hover {
     background-color: lightgreen;
 }
@@ -77,9 +96,12 @@ body {
     
 }
 
+
+
 .gameScreen {
     width: 99vw;
     height: 80vh;
+    border-radius: 5%;
     background-color: green;
     display: flex;
     flex-wrap: wrap;
@@ -123,6 +145,13 @@ body {
 
 h1 {
     font-size: 5vw;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+}
+
+h2 {
+    font-size: 3vw;
     font-weight: bold;
     color: black;
     text-align: center;
