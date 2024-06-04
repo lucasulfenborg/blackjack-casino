@@ -1,6 +1,3 @@
-//variable names should be in snake_case
-//Methods and classes should be in camelCase
-
 class player {
     #money;
 
