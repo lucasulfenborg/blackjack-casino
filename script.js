@@ -21,6 +21,43 @@ class player {
 
 }
 
+class card {
+    constructor(suit, value) {
+        this.suit = suit;
+        this.value = value;
+    }
+}
+
+class deck {
+    constructor() {
+        this.cards = [];
+    }
+
+    createDeck() {
+        let suits = ['♠', '♣', '♦', '♥'];
+        let values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+        for (let suit of suits) {
+            for (let value of values) {
+                this.cards.push(new card(suit, value));
+            }
+        }
+    }
+
+    shuffleDeck() {
+        for (let i = this.cards.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * i);
+            let temp = this.cards[i];
+            this.cards[i] = this.cards[j];
+            this.cards[j] = temp;
+        }
+    }
+
+    dealCard() {
+        return this.cards.pop();
+    }
+}
+
 class game {
     constructor(name) {
         this.name = name;
@@ -183,10 +220,10 @@ class pokerGame extends game {
 
 
     createDeck() { //Standard poker cards
-        this.deck = ['h1','h2','h3','h4','h5','h6','h7','h8','h9','h10','h11','h12','h13',
-                    'd1','d2','d3','d4','d5','d6','d7','d8','d9','d10','d11','d12','d13',
-                    'c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13',
-                    's1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13'];                
+        this.deck = ['♥A','♥2','♥3','♥4','♥5','♥6','♥7','♥8','♥9','♥10','♥J','♥Q','♥K',
+             '♦A','♦2','♦3','♦4','♦5','♦6','♦7','♦8','♦9','♦10','♦J','♦Q','♦K',
+             '♣A','♣2','♣3','♣4','♣5','♣6','♣7','♣8','♣9','♣10','♣J','♣Q','♣K',
+             '♠A','♠2','♠3','♠4','♠5','♠6','♠7','♠8','♠9','♠10','♠J','♠Q','♠K'];
     }
 
     dealCard() {
@@ -215,14 +252,15 @@ class pokerGame extends game {
         let dealer_cards_element = document.getElementsByClassName('dealer_cards')[0];
 
         //remove all cards
-        player_cards_element.innerHTML = '';
-        dealer_cards_element.innerHTML = '';
+        player_cards_element.innerHTML = 'Your cards:';
+        dealer_cards_element.innerHTML = 'Dealer cards:';
 
         for (let card of player_cards) {
             let player_card = document.createElement('div');
             player_card.innerHTML = card;
             player_card.classList.add('card');
             player_cards_element.appendChild(player_card);
+
         }
 
         for (let card of dealer_cards) {
@@ -230,6 +268,7 @@ class pokerGame extends game {
             dealer_card.innerHTML = card;
             dealer_card.classList.add('card');
             dealer_cards_element.appendChild(dealer_card);
+
         }
 
      
@@ -294,14 +333,14 @@ class blackJack extends pokerGame {
         let aces = 0;
     
         for (let card of cards) {
-            let cardValue = parseInt(card.substring(1));
-            if (cardValue > 10) { // face card
+            let cardValue = (card.substring(1));
+            if (cardValue === 'J' || cardValue === 'Q' || cardValue === 'K') { // face card
                 value += 10;
-            } else if (cardValue === 1) { // Ace
+            } else if (cardValue === "A") { // Ace
                 value += 11;
                 aces += 1;
             } else {
-                value += cardValue;
+                value += parseInt(cardValue);
             }
         }
     
@@ -310,8 +349,10 @@ class blackJack extends pokerGame {
             value -= 10;
             aces -= 1;
         }
-    
+        
+        console.log(value)
         return value;
+
     }
 
     async startGame() {
@@ -336,6 +377,7 @@ class blackJack extends pokerGame {
 
         //ask for bet
         await this.askForBet();
+        betAmount = this.bet;
 
         // deal first card to player
         await game.delay(500);
@@ -361,7 +403,6 @@ class blackJack extends pokerGame {
                     this.player_cards.push(this.dealCard());
                     this.updateCardsDisplay(this.player_cards, this.dealer_cards);
                     if (this.calculateHandValue(this.player_cards) > 21) {
-                        end_message = "You busted! Dealer wins!";
                         continueGame = false;
                     }
                     break;
@@ -386,6 +427,16 @@ class blackJack extends pokerGame {
         dealerValue = this.calculateHandValue(this.dealer_cards);
 
         switch(true) {
+            case playerValue > 21:
+                end_message = "You busted! Dealer wins!";
+                payout = 0;
+                break;
+
+            case playerValue == dealerValue:
+                end_message = "Push";
+                payout = betAmount;
+                break;
+            
             case playerValue == 21 && this.player_cards.length == 2:
                 end_message = "You got a blackjack! You win";
                 payout = betAmount * 2.5;
@@ -406,10 +457,7 @@ class blackJack extends pokerGame {
                 end_message = "Dealer wins!";
                 payout = 0;
                 break;
-            case playerValue == dealerValue:
-                end_message = "Push";
-                payout = betAmount;
-                break;
+            
         }
 
         player1.addMoney(payout);
@@ -424,18 +472,6 @@ class blackJack extends pokerGame {
         
     }
 }
-
-class blackJackWithPush extends blackJack {
-    constructor() {
-        super();
-        this.name = "BlackJack with push";
-    }
-
-    //Override
-    
-
-}
-
 
 let games = [
     new blackJack(),

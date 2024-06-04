@@ -3,6 +3,7 @@
 body {
     font-size: calc(1em + 1vw);
     font-family: 'Luckiest Guy', cursive;
+    background-color: lightblue;
 
 }
 
@@ -65,12 +66,13 @@ body {
     font-size: 2vw;
     font-weight: bold;
     color: black;
+    
 }
 
 .gameScreen {
-    width: 100vw;
+    width: 99vw;
     height: 80vh;
-    background-color: wheat;
+    background-color: green;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
@@ -80,7 +82,6 @@ body {
 .dealer_cards {
     width: 80vw;
     height: 40vh;
-    background-color: white;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -90,7 +91,6 @@ body {
 .player_cards {
     width: 80vw;
     height: 40vh;
-    background-color: white;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -98,7 +98,7 @@ body {
 }
 
 .card {
-    width: 10vw;
+    width: 6vw;
     height: 20vh;
     background-color: white;
     border: 1px solid black;
@@ -110,4 +110,5 @@ body {
     font-weight: bold;
     color: black;
     cursor: pointer;
+    text-align: left;
 }
